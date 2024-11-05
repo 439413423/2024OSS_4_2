@@ -4,22 +4,21 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AJAX CRUD with MockAPI</title>
+    <title>AJAX CRUD</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
 
-<div class="container mt-4">
-    <h1>회원 관리</h1>
-    <button class="btn btn-primary" onclick="showAddModal()">데이터 추가</button>
-    <button class="btn btn-secondary" onclick="getData()">회원 목록 로드</button>
-    <br><br>
+<h1>회원 관리</h1>
 
-    <div id="data-list">
-        <h2>회원 목록</h2>
-    </div>
+<button onclick="getData()">회원 목록 로드</button>
+<br><br>
+ID: <input type="text" id="id" /> 
+<br><br>
+<div id="data-list">
+    <h2>회원 목록</h2>
 </div>
 
 <!-- 데이터 추가/수정 Modal -->
@@ -31,19 +30,18 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        ID: <input type="text" id="modal-id" class="form-control" readonly />
         이름: <input type="text" id="modal-firstName" class="form-control" /><br>
         성: <input type="text" id="modal-lastName" class="form-control" /><br>
         생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
         성별: 
         <select id="modal-gender" class="form-control">
-          <option value="남">남</option>
-          <option value="여">여</option>
+            <option value="남">남</option>
+            <option value="여">여</option>
         </select><br>
         국적: 
         <select id="modal-nationality" class="form-control">
-          <option value="내국인">내국인</option>
-          <option value="외국인">외국인</option>
+            <option value="내국인">내국인</option>
+            <option value="외국인">외국인</option>
         </select>
       </div>
       <div class="modal-footer">
@@ -54,10 +52,13 @@
   </div>
 </div>
 
+<!-- 버튼 추가: 데이터 추가 및 수정 -->
+<button class="btn btn-primary" onclick="showAddModal()">데이터 추가</button>
+<button class="btn btn-warning" onclick="showEditModal()">데이터 수정</button>
+
 <script>
     const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/v1/users";
 
-    // 데이터 목록 가져오기
     function getData() {
         $.ajax({
             url: apiUrl,
@@ -66,13 +67,7 @@
                 const dataList = $("#data-list");
                 dataList.html("<h2>회원 목록</h2>");
                 data.forEach(person => {
-                    dataList.append(`
-                        <div>
-                            ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}
-                            <button onclick="editData(${person.id})">수정</button>
-                            <button onclick="deleteData(${person.id})">삭제</button>
-                        </div>
-                    `);
+                    dataList.append(`<div>ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}</div>`);
                 });
             },
             error: function() {
@@ -81,20 +76,43 @@
         });
     }
 
-    // 데이터 추가/수정 Modal 열기
     function showAddModal() {
-        $("#modal-id").val('');
         $("#modal-firstName").val('');
         $("#modal-lastName").val('');
         $("#modal-birthDate").val('');
         $("#modal-gender").val('남');
         $("#modal-nationality").val('내국인');
+        $("#dataModalLabel").text("데이터 추가");
         $("#dataModal").modal("show");
     }
 
-    // 데이터 저장
+    function showEditModal() {
+        const id = $("#id").val();
+        if (!id) {
+            alert("ID 입력하기");
+            return;
+        }
+
+        $.ajax({
+            url: `${apiUrl}/${id}`,
+            method: "GET",
+            success: function(person) {
+                $("#modal-firstName").val(person.firstName);
+                $("#modal-lastName").val(person.lastName);
+                $("#modal-birthDate").val(person.birthDate);
+                $("#modal-gender").val(person.gender);
+                $("#modal-nationality").val(person.nationality);
+                $("#dataModalLabel").text("데이터 수정");
+                $("#dataModal").modal("show");
+            },
+            error: function() {
+                alert("데이터 불러오기 실패");
+            }
+        });
+    }
+
     function saveData() {
-        const id = $("#modal-id").val();
+        const id = $("#id").val();
         const firstName = $("#modal-firstName").val();
         const lastName = $("#modal-lastName").val();
         const birthDate = $("#modal-birthDate").val();
@@ -103,7 +121,7 @@
 
         const data = { firstName, lastName, birthDate, gender, nationality };
 
-        if (id) {
+        if (id && $("#dataModalLabel").text() === "데이터 수정") {
             // 수정 요청
             $.ajax({
                 url: `${apiUrl}/${id}`,
@@ -136,41 +154,6 @@
                 }
             });
         }
-    }
-
-    // 데이터 삭제
-    function deleteData(id) {
-        $.ajax({
-            url: `${apiUrl}/${id}`,
-            method: "DELETE",
-            success: function() {
-                alert("삭제 성공");
-                getData();
-            },
-            error: function() {
-                alert("삭제 실패");
-            }
-        });
-    }
-
-    // 데이터 수정 Modal 열기
-    function editData(id) {
-        $.ajax({
-            url: `${apiUrl}/${id}`,
-            method: "GET",
-            success: function(person) {
-                $("#modal-id").val(person.id);
-                $("#modal-firstName").val(person.firstName);
-                $("#modal-lastName").val(person.lastName);
-                $("#modal-birthDate").val(person.birthDate);
-                $("#modal-gender").val(person.gender);
-                $("#modal-nationality").val(person.nationality);
-                $("#dataModal").modal("show");
-            },
-            error: function() {
-                alert("데이터 불러오기 실패");
-            }
-        });
     }
 </script>
 
