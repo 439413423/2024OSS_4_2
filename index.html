@@ -97,39 +97,55 @@ ID: <input type="text" id="id" />
     }
 
     function showCreateModal() {
-        // Modal 창 초기화
-        document.getElementById("modal-firstName").value = "";
-        document.getElementById("modal-lastName").value = "";
-        document.getElementById("modal-birthDate").value = "";
-        document.getElementById("modal-gender").value = "남";
-        document.getElementById("modal-nationality").value = "내국인";
-        document.getElementById("dataModalLabel").innerText = "데이터 추가";
+    // Modal 창 초기화
+    document.getElementById("modal-firstName").value = "";
+    document.getElementById("modal-lastName").value = "";
+    document.getElementById("modal-birthDate").value = "";
+    document.getElementById("modal-gender").value = "남";
+    document.getElementById("modal-nationality").value = "내국인";
+    document.getElementById("dataModalLabel").innerText = "데이터 추가";
+
+    // 디버깅: 모달 표시 확인
+    console.log("showCreateModal called - 데이터 추가 모달 표시");
+}
+
+function showUpdateModal() {
+    const id = document.getElementById("id").value;
+    if (!id) {
+        alert("ID 입력하기");
+        return;
     }
 
-    function showUpdateModal() {
-        const id = document.getElementById("id").value;
-        if (!id) {
-            alert("ID 입력하기");
-            return;
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", `${apiUrl}/${id}`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const person = JSON.parse(xhr.responseText);
+            document.getElementById("modal-firstName").value = person.firstName;
+            document.getElementById("modal-lastName").value = person.lastName;
+            document.getElementById("modal-birthDate").value = person.birthDate;
+            document.getElementById("modal-gender").value = person.gender;
+            document.getElementById("modal-nationality").value = person.nationality;
+            document.getElementById("dataModalLabel").innerText = "데이터 수정";
+
+            // 디버깅: 모달 표시 확인
+            console.log("showUpdateModal called - 데이터 수정 모달 표시");
+        } else {
+            alert("데이터 불러오기 실패");
         }
+    };
+    xhr.send();
+}
 
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", `${apiUrl}/${id}`, true);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                const person = JSON.parse(xhr.responseText);
-                document.getElementById("modal-firstName").value = person.firstName;
-                document.getElementById("modal-lastName").value = person.lastName;
-                document.getElementById("modal-birthDate").value = person.birthDate;
-                document.getElementById("modal-gender").value = person.gender;
-                document.getElementById("modal-nationality").value = person.nationality;
-                document.getElementById("dataModalLabel").innerText = "데이터 수정";
-            } else {
-                alert("데이터 불러오기 실패");
-            }
-        };
-        xhr.send();
-    }
+// 모달 이벤트 리스너 추가
+const dataModal = document.getElementById('dataModal');
+dataModal.addEventListener('shown.bs.modal', () => {
+    console.log('Modal is now shown');
+});
+dataModal.addEventListener('hidden.bs.modal', () => {
+    console.log('Modal is now hidden');
+});
+
 
     function saveData() {
         const id = document.getElementById("id").value;
