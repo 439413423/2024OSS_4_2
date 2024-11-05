@@ -91,42 +91,45 @@ ID: <input type="text" id="id" />
         };
         xhr.send();
     }
-
     function showCreateModal() {
-        document.getElementById("modal-firstName").value = "";
-        document.getElementById("modal-lastName").value = "";
-        document.getElementById("modal-birthDate").value = "";
-        document.getElementById("modal-gender").value = "남";
-        document.getElementById("modal-nationality").value = "내국인";
-        document.getElementById("dataModalLabel").innerText = "데이터 추가";
-        $("#dataModal").modal("show");
+    // Modal 창 초기화
+    document.getElementById("modal-firstName").value = "";
+    document.getElementById("modal-lastName").value = "";
+    document.getElementById("modal-birthDate").value = "";
+    document.getElementById("modal-gender").value = "남";
+    document.getElementById("modal-nationality").value = "내국인";
+    document.getElementById("dataModalLabel").innerText = "데이터 추가";
+    // Modal 창 표시
+    $("#dataModal").modal("show");
+}
+
+function showUpdateModal() {
+    const id = document.getElementById("id").value;
+    if (!id) {
+        alert("ID 입력하기");
+        return;
     }
 
-    function showUpdateModal() {
-        const id = document.getElementById("id").value;
-        if (!id) {
-            alert("ID 입력하기");
-            return;
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", `${apiUrl}/${id}`, true);
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            const person = JSON.parse(xhr.responseText);
+            document.getElementById("modal-firstName").value = person.firstName;
+            document.getElementById("modal-lastName").value = person.lastName;
+            document.getElementById("modal-birthDate").value = person.birthDate;
+            document.getElementById("modal-gender").value = person.gender;
+            document.getElementById("modal-nationality").value = person.nationality;
+            document.getElementById("dataModalLabel").innerText = "데이터 수정";
+            // Modal 창 표시
+            $("#dataModal").modal("show");
+        } else {
+            alert("데이터 불러오기 실패");
         }
+    };
+    xhr.send();
+}
 
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", `${apiUrl}/${id}`, true);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                const person = JSON.parse(xhr.responseText);
-                document.getElementById("modal-firstName").value = person.firstName;
-                document.getElementById("modal-lastName").value = person.lastName;
-                document.getElementById("modal-birthDate").value = person.birthDate;
-                document.getElementById("modal-gender").value = person.gender;
-                document.getElementById("modal-nationality").value = person.nationality;
-                document.getElementById("dataModalLabel").innerText = "데이터 수정";
-                $("#dataModal").modal("show");
-            } else {
-                alert("데이터 불러오기 실패");
-            }
-        };
-        xhr.send();
-    }
 
     function saveData() {
         const id = document.getElementById("id").value;
