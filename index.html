@@ -39,7 +39,7 @@ ID: <input type="text" id="id" />
     <h2>회원 목록</h2>
 </div>
 
-<!-- 데이터 추가/수정 Modal -->
+<!-- 데이터 추가/수정 Modal (기본적으로 보이지 않음) -->
 <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -71,7 +71,7 @@ ID: <input type="text" id="id" />
 </div>
 
 <script>
-    const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users"; // MockAPI URL 사용
+    const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users"; // 주어진 MockAPI 링크 사용
 
     function getData() {
         const xhr = new XMLHttpRequest();
