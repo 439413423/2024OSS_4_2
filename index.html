@@ -15,8 +15,27 @@
 
 <button onclick="getData()">회원 목록 로드</button>
 <br><br>
-ID: <input type="text" id="id" /> 
+ID: <input type="text" id="id" />
+이름: <input type="text" id="firstName" /><br>
+성: <input type="text" id="lastName" /><br>
+생년월일: <input type="date" id="birthDate" /><br>
+성별: <select id="gender">
+        <option value="남">남</option>
+        <option value="여">여</option>
+      </select><br>
+국적: <select id="nationality">
+        <option value="내국인">내국인</option>
+        <option value="외국인">외국인</option>
+      </select><br>
+<br>
+<button onclick="showCreateModal()">데이터 추가</button>
+<button onclick="showUpdateModal()">데이터 수정</button>
+<button onclick="deleteData()">데이터 삭제</button>
 <br><br>
+
+<div id="data-list">
+    <h2>회원 목록</h2>
+</div>
 
 <!-- 데이터 추가/수정 Modal -->
 <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
@@ -43,22 +62,14 @@ ID: <input type="text" id="id" />
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        <button type="button" class="btn btn-primary" onclick="createData()">저장하기</button>
+        <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
       </div>
     </div>
   </div>
 </div>
 
-<button class="btn btn-primary" onclick="showCreateModal()">데이터 추가</button>
-<button class="btn btn-warning" onclick="showUpdateModal()">데이터 수정</button>
-<button class="btn btn-danger" onclick="deleteData()">데이터 삭제</button>
-
-<div id="data-list">
-    <h2>회원 목록</h2>
-</div>
-
 <script>
-    const apiUrl = "http://localhost:3000/users";
+    const apiUrl = "https://mockapi.io/api/v1/users"; // MockAPI URL로 수정
 
     function getData() {
         const xhr = new XMLHttpRequest();
@@ -80,6 +91,7 @@ ID: <input type="text" id="id" />
     }
 
     function showCreateModal() {
+        // Modal을 데이터 추가에 사용
         document.getElementById("modal-firstName").value = "";
         document.getElementById("modal-lastName").value = "";
         document.getElementById("modal-birthDate").value = "";
@@ -89,31 +101,8 @@ ID: <input type="text" id="id" />
         $("#dataModal").modal("show");
     }
 
-    function createData() {
-        const firstName = document.getElementById("modal-firstName").value;
-        const lastName = document.getElementById("modal-lastName").value;
-        const birthDate = document.getElementById("modal-birthDate").value;
-        const gender = document.getElementById("modal-gender").value;
-        const nationality = document.getElementById("modal-nationality").value;
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", apiUrl, true);
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhr.onload = function() {
-            if (xhr.status === 201) {
-                alert("추가 성공");
-                getData();
-                $("#dataModal").modal("hide");
-            } else {
-                alert("추가 실패");
-            }
-        };
-
-        const newData = { firstName, lastName, birthDate, gender, nationality };
-        xhr.send(JSON.stringify(newData));
-    }
-
     function showUpdateModal() {
+        // Modal을 데이터 수정에 사용
         const id = document.getElementById("id").value;
         if (!id) {
             alert("ID 입력하기");
@@ -139,7 +128,7 @@ ID: <input type="text" id="id" />
         xhr.send();
     }
 
-    function updateData() {
+    function saveData() {
         const id = document.getElementById("id").value;
         const firstName = document.getElementById("modal-firstName").value;
         const lastName = document.getElementById("modal-lastName").value;
@@ -147,26 +136,39 @@ ID: <input type="text" id="id" />
         const gender = document.getElementById("modal-gender").value;
         const nationality = document.getElementById("modal-nationality").value;
 
-        if (!id) {
-            alert("ID 입력하기");
-            return;
+        const data = { firstName, lastName, birthDate, gender, nationality };
+
+        if (id && document.getElementById("dataModalLabel").innerText === "데이터 수정") {
+            // 수정 요청
+            const xhr = new XMLHttpRequest();
+            xhr.open("PUT", `${apiUrl}/${id}`, true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    alert("수정 성공");
+                    getData();
+                    $("#dataModal").modal("hide");
+                } else {
+                    alert("수정 실패");
+                }
+            };
+            xhr.send(JSON.stringify(data));
+        } else {
+            // 추가 요청
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", apiUrl, true);
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+            xhr.onload = function() {
+                if (xhr.status === 201) {
+                    alert("추가 성공");
+                    getData();
+                    $("#dataModal").modal("hide");
+                } else {
+                    alert("추가 실패");
+                }
+            };
+            xhr.send(JSON.stringify(data));
         }
-
-        const xhr = new XMLHttpRequest();
-        xhr.open("PUT", `${apiUrl}/${id}`, true);
-        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                alert("수정 성공");
-                getData();
-                $("#dataModal").modal("hide");
-            } else {
-                alert("수정 실패");
-            }
-        };
-
-        const updatedData = { firstName, lastName, birthDate, gender, nationality };
-        xhr.send(JSON.stringify(updatedData));
     }
 
     function deleteData() {
@@ -177,7 +179,6 @@ ID: <input type="text" id="id" />
         }
         const xhr = new XMLHttpRequest();
         xhr.open("DELETE", `${apiUrl}/${id}`, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
         xhr.onload = function() {
             if (xhr.status === 200) {
                 alert("삭제 성공");
