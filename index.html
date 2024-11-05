@@ -1,11 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>AJAX CRUD with Modal</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
-    
+
+<div class="container mt-4">
+    <h1>회원 관리</h1>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dataModal">데이터 추가/수정</button>
+    <button class="btn btn-secondary" onclick="getData()">회원 목록 로드</button>
+    <br><br>
+
+    <div id="data-list">
+        <h2>회원 목록</h2>
+    </div>
+</div>
+
+<!-- 데이터 추가/수정 Modal -->
+<div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="dataModalLabel">데이터 추가/수정</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ID: <input type="text" id="modal-id" class="form-control" /> 
+        이름: <input type="text" id="modal-firstName" class="form-control" /><br>
+        성: <input type="text" id="modal-lastName" class="form-control" /><br>
+        생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
+        성별: 
+        <select id="modal-gender" class="form-control">
+          <option value="남">남</option>
+          <option value="여">여</option>
+        </select><br>
+        국적: 
+        <select id="modal-nationality" class="form-control">
+          <option value="내국인">내국인</option>
+          <option value="외국인">외국인</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function getData() {
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/users", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                const dataList = document.getElementById("data-list");
+                dataList.innerHTML = "<h2>회원 목록</h2>";
+                data.forEach(person => {
+                    dataList.innerHTML += `<div>ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}</div>`;
+                });
+            } else {
+                alert("데이터 로드 실패");
+            }
+        };
+        xhr.send();
+    }
+
+    function saveData() {
+        const id = document.getElementById("modal-id").value;
+        const firstName = document.getElementById("modal-firstName").value;
+        const lastName = document.getElementById("modal-lastName").value;
+        const birthDate = document.getElementById("modal-birthDate").value;
+        const gender = document.getElementById("modal-gender").value;
+        const nationality = document.getElementById("modal-nationality").value;
+
+        if (!id) {
+            alert("ID 입력하기");
+            return;
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:3000/users", true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onload = function() {
+            if (xhr.status === 201) {
+                alert("추가 성공");
+                getData();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('dataModal'));
+                modal.hide();
+            } else {
+                alert("추가 실패");
+            }
+        };
+
+        const newData = { id, firstName, lastName, birthDate, gender, nationality };
+        xhr.send(JSON.stringify(newData));
+    }
+</script>
+
 </body>
 </html>
