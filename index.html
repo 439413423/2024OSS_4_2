@@ -39,12 +39,12 @@ ID: <input type="text" id="id" />
     <h2>회원 목록</h2>
 </div>
 
-<!-- 데이터 추가/수정 Modal (Bootstrap 설정을 활용해 기본적으로 숨김) -->
-<div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
+<!-- 데이터 추가 Modal -->
+<div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="dataModalLabel"></h5> <!-- 모달 제목이 동적으로 변경됨 -->
+                <h5 class="modal-title" id="createModalLabel">데이터 추가</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -64,14 +64,45 @@ ID: <input type="text" id="id" />
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
+                <button type="button" class="btn btn-primary" onclick="saveData('create')">저장하기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 데이터 수정 Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">데이터 수정</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                이름: <input type="text" id="modal-firstName" class="form-control" /><br>
+                성: <input type="text" id="modal-lastName" class="form-control" /><br>
+                생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
+                성별: 
+                <select id="modal-gender" class="form-control">
+                    <option value="남">남</option>
+                    <option value="여">여</option>
+                </select><br>
+                국적: 
+                <select id="modal-nationality" class="form-control">
+                    <option value="내국인">내국인</option>
+                    <option value="외국인">외국인</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" onclick="saveData('update')">저장하기</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users"; // 주어진 MockAPI 링크 사용
+    const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users";
 
     function getData() {
         const xhr = new XMLHttpRequest();
@@ -99,10 +130,8 @@ ID: <input type="text" id="id" />
         document.getElementById("modal-birthDate").value = "";
         document.getElementById("modal-gender").value = "남";
         document.getElementById("modal-nationality").value = "내국인";
-        // 모달 제목을 "데이터 추가"로 설정
-        document.getElementById("dataModalLabel").innerText = "데이터 추가";
-        // 모달 표시
-        $("#dataModal").modal("show");
+        // "데이터 추가" 모달 표시
+        $("#createModal").modal("show");
     }
 
     function showUpdateModal() {
@@ -122,10 +151,8 @@ ID: <input type="text" id="id" />
                 document.getElementById("modal-birthDate").value = person.birthDate;
                 document.getElementById("modal-gender").value = person.gender;
                 document.getElementById("modal-nationality").value = person.nationality;
-                // 모달 제목을 "데이터 수정"으로 설정
-                document.getElementById("dataModalLabel").innerText = "데이터 수정";
-                // 모달 표시
-                $("#dataModal").modal("show");
+                // "데이터 수정" 모달 표시
+                $("#updateModal").modal("show");
             } else {
                 alert("데이터 불러오기 실패");
             }
@@ -133,17 +160,20 @@ ID: <input type="text" id="id" />
         xhr.send();
     }
 
-    function saveData() {
-        const id = document.getElementById("id").value;
+    function saveData(action) {
         const firstName = document.getElementById("modal-firstName").value;
         const lastName = document.getElementById("modal-lastName").value;
         const birthDate = document.getElementById("modal-birthDate").value;
         const gender = document.getElementById("modal-gender").value;
         const nationality = document.getElementById("modal-nationality").value;
-
         const data = { firstName, lastName, birthDate, gender, nationality };
 
-        if (id && document.getElementById("dataModalLabel").innerText === "데이터 수정") {
+        if (action === "update") {
+            const id = document.getElementById("id").value;
+            if (!id) {
+                alert("ID 입력하기");
+                return;
+            }
             const xhr = new XMLHttpRequest();
             xhr.open("PUT", `${apiUrl}/${id}`, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -151,7 +181,7 @@ ID: <input type="text" id="id" />
                 if (xhr.status === 200) {
                     alert("수정 성공");
                     getData();
-                    $("#dataModal").modal("hide");
+                    $("#updateModal").modal("hide");
                 } else {
                     alert("수정 실패");
                 }
@@ -165,7 +195,7 @@ ID: <input type="text" id="id" />
                 if (xhr.status === 201) {
                     alert("추가 성공");
                     getData();
-                    $("#dataModal").modal("hide");
+                    $("#createModal").modal("hide");
                 } else {
                     alert("추가 실패");
                 }
