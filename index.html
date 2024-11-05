@@ -31,10 +31,10 @@ ID: <input type="text" id="id" />
 </select><br>
 <br>
 <!-- 데이터 추가 버튼 -->
-<button type="button" class="btn btn-primary" onclick="showCreateModal()">데이터 추가</button>
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dataModal" onclick="prepareCreateModal()">데이터 추가</button>
 
 <!-- 데이터 수정 버튼 -->
-<button type="button" class="btn btn-secondary" onclick="showUpdateModal()">데이터 수정</button>
+<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#dataModal" onclick="prepareUpdateModal()">데이터 수정</button>
 
 <button onclick="deleteData()">데이터 삭제</button>
 <br><br>
@@ -43,7 +43,7 @@ ID: <input type="text" id="id" />
     <h2>회원 목록</h2>
 </div>
 
-<!-- 데이터 추가/수정 Modal -->
+<!-- Modal -->
 <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -96,7 +96,7 @@ ID: <input type="text" id="id" />
         xhr.send();
     }
 
-    function showCreateModal() {
+    function prepareCreateModal() {
         // Modal 창 초기화
         document.getElementById("modal-firstName").value = "";
         document.getElementById("modal-lastName").value = "";
@@ -104,11 +104,9 @@ ID: <input type="text" id="id" />
         document.getElementById("modal-gender").value = "남";
         document.getElementById("modal-nationality").value = "내국인";
         document.getElementById("dataModalLabel").innerText = "데이터 추가";
-        // Modal 창 표시
-        $('#dataModal').modal('show');
     }
 
-    function showUpdateModal() {
+    function prepareUpdateModal() {
         const id = document.getElementById("id").value;
         if (!id) {
             alert("ID 입력하기");
@@ -126,8 +124,6 @@ ID: <input type="text" id="id" />
                 document.getElementById("modal-gender").value = person.gender;
                 document.getElementById("modal-nationality").value = person.nationality;
                 document.getElementById("dataModalLabel").innerText = "데이터 수정";
-                // Modal 창 표시
-                $('#dataModal').modal('show');
             } else {
                 alert("데이터 불러오기 실패");
             }
