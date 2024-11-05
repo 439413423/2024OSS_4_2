@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,204 +10,192 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
 
-<h1>회원 관리</h1>
+    <h1>회원 관리</h1>
 
-<button onclick="getData()">회원 목록 로드</button>
-<br><br>
-ID: <input type="text" id="id" />
-이름: <input type="text" id="firstName" /><br>
-성: <input type="text" id="lastName" /><br>
-생년월일: <input type="date" id="birthDate" /><br>
-성별: 
-<select id="gender">
-    <option value="남">남</option>
-    <option value="여">여</option>
-</select><br>
-국적: 
-<select id="nationality">
-    <option value="내국인">내국인</option>
-    <option value="외국인">외국인</option>
-</select><br>
-<br>
-<!-- 데이터 추가 버튼 -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dataModal" onclick="showCreateModal()">데이터 추가</button>
+    <button onclick="getData()">회원 목록 로드</button>
+    <br><br>
+    ID: <input type="text" id="id" />
+    이름: <input type="text" id="firstName" /><br>
+    성: <input type="text" id="lastName" /><br>
+    생년월일: <input type="date" id="birthDate" /><br>
+    성별:
+    <select id="gender">
+        <option value="남">남</option>
+        <option value="여">여</option>
+    </select><br>
+    국적:
+    <select id="nationality">
+        <option value="내국인">내국인</option>
+        <option value="외국인">외국인</option>
+    </select><br>
+    <br>
+    <!-- 데이터 추가 버튼 -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dataModal"
+        onclick="showCreateModal()">데이터 추가</button>
 
-<!-- 데이터 수정 버튼 -->
-<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#dataModal" onclick="showUpdateModal()">데이터 수정</button>
+    <!-- 데이터 수정 버튼 -->
+    <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#dataModal"
+        onclick="showUpdateModal()">데이터 수정</button>
 
-<button onclick="deleteData()">데이터 삭제</button>
-<br><br>
+    <button onclick="deleteData()">데이터 삭제</button>
+    <br><br>
 
-<div id="data-list">
-    <h2>회원 목록</h2>
-</div>
-
-<!-- 데이터 추가/수정 Modal (Bootstrap 설정을 활용해 기본적으로 숨김) -->
-<div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="dataModalLabel"></h5> <!-- 모달 제목이 동적으로 설정됨 -->
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        이름: <input type="text" id="modal-firstName" class="form-control" /><br>
-        성: <input type="text" id="modal-lastName" class="form-control" /><br>
-        생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
-        성별: 
-        <select id="modal-gender" class="form-control">
-            <option value="남">남</option>
-            <option value="여">여</option>
-        </select><br>
-        국적: 
-        <select id="modal-nationality" class="form-control">
-            <option value="내국인">내국인</option>
-            <option value="외국인">외국인</option>
-        </select>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
-      </div>
+    <div id="data-list">
+        <h2>회원 목록</h2>
     </div>
-  </div>
-</div>
 
-<script>
-    const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users"; // 주어진 MockAPI 링크 사용
+    <!-- 데이터 추가/수정 Modal (Bootstrap 설정을 활용해 기본적으로 숨김) -->
+    <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dataModalLabel"></h5> <!-- 모달 제목이 동적으로 설정됨 -->
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    이름: <input type="text" id="modal-firstName" class="form-control" /><br>
+                    성: <input type="text" id="modal-lastName" class="form-control" /><br>
+                    생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
+                    성별:
+                    <select id="modal-gender" class="form-control">
+                        <option value="남">남</option>
+                        <option value="여">여</option>
+                    </select><br>
+                    국적:
+                    <select id="modal-nationality" class="form-control">
+                        <option value="내국인">내국인</option>
+                        <option value="외국인">외국인</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    function getData() {
-        const xhr = new XMLHttpRequest();
-        xhr.open("GET", apiUrl, true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                const data = JSON.parse(xhr.responseText);
-                const dataList = document.getElementById("data-list");
-                dataList.innerHTML = "<h2>회원 목록</h2>";
-                data.forEach(person => {
-                    dataList.innerHTML += `<div>ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}</div>`;
-                });
-            } else {
-                alert("데이터 로드 실패");
-            }
-        };
-        xhr.send();
-    }
+    <script>
+        const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users"; // 주어진 MockAPI 링크 사용
 
-    function showCreateModal() {
-    // Modal 창 초기화
-    document.getElementById("modal-firstName").value = "";
-    document.getElementById("modal-lastName").value = "";
-    document.getElementById("modal-birthDate").value = "";
-    document.getElementById("modal-gender").value = "남";
-    document.getElementById("modal-nationality").value = "내국인";
-    document.getElementById("dataModalLabel").innerText = "데이터 추가";
-
-    // 디버깅: 모달 표시 확인
-    console.log("showCreateModal called - 데이터 추가 모달 표시");
-}
-
-function showUpdateModal() {
-    const id = document.getElementById("id").value;
-    if (!id) {
-        alert("ID 입력하기");
-        return;
-    }
-
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", `${apiUrl}/${id}`, true);
-    xhr.onload = function() {
-        if (xhr.status === 200) {
-            const person = JSON.parse(xhr.responseText);
-            document.getElementById("modal-firstName").value = person.firstName;
-            document.getElementById("modal-lastName").value = person.lastName;
-            document.getElementById("modal-birthDate").value = person.birthDate;
-            document.getElementById("modal-gender").value = person.gender;
-            document.getElementById("modal-nationality").value = person.nationality;
-            document.getElementById("dataModalLabel").innerText = "데이터 수정";
-
-            // 디버깅: 모달 표시 확인
-            console.log("showUpdateModal called - 데이터 수정 모달 표시");
-        } else {
-            alert("데이터 불러오기 실패");
-        }
-    };
-    xhr.send();
-}
-
-// 모달 이벤트 리스너 추가
-const dataModal = document.getElementById('dataModal');
-dataModal.addEventListener('shown.bs.modal', () => {
-    console.log('Modal is now shown');
-});
-dataModal.addEventListener('hidden.bs.modal', () => {
-    console.log('Modal is now hidden');
-});
-
-
-    function saveData() {
-        const id = document.getElementById("id").value;
-        const firstName = document.getElementById("modal-firstName").value;
-        const lastName = document.getElementById("modal-lastName").value;
-        const birthDate = document.getElementById("modal-birthDate").value;
-        const gender = document.getElementById("modal-gender").value;
-        const nationality = document.getElementById("modal-nationality").value;
-
-        const data = { firstName, lastName, birthDate, gender, nationality };
-
-        if (id && document.getElementById("dataModalLabel").innerText === "데이터 수정") {
+        function getData() {
             const xhr = new XMLHttpRequest();
-            xhr.open("PUT", `${apiUrl}/${id}`, true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr.onload = function() {
+            xhr.open("GET", apiUrl, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onload = function () {
                 if (xhr.status === 200) {
-                    alert("수정 성공");
-                    getData();
-                    $("#dataModal").modal("hide");
+                    const data = JSON.parse(xhr.responseText);
+                    const dataList = document.getElementById("data-list");
+                    dataList.innerHTML = "<h2>회원 목록</h2>";
+                    data.forEach(person => {
+                        dataList.innerHTML += `<div>ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}</div>`;
+                    });
                 } else {
-                    alert("수정 실패");
+                    alert("데이터 로드 실패");
                 }
             };
-            xhr.send(JSON.stringify(data));
-        } else {
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", apiUrl, true);
-            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-            xhr.onload = function() {
-                if (xhr.status === 201) {
-                    alert("추가 성공");
-                    getData();
-                    $("#dataModal").modal("hide");
-                } else {
-                    alert("추가 실패");
-                }
-            };
-            xhr.send(JSON.stringify(data));
+            xhr.send();
         }
-    }
 
-    function deleteData() {
-        const id = document.getElementById("id").value;
-        if (!id) {
-            alert("ID 입력하기");
-            return;
+        function showCreateModal() {
+            // Modal 창 초기화
+            document.getElementById("modal-firstName").value = "";
+            document.getElementById("modal-lastName").value = "";
+            document.getElementById("modal-birthDate").value = "";
+            document.getElementById("modal-gender").value = "남";
+            document.getElementById("modal-nationality").value = "내국인";
+            document.getElementById("dataModalLabel").innerText = "데이터 추가";
         }
-        const xhr = new XMLHttpRequest();
-        xhr.open("DELETE", `${apiUrl}/${id}`, true);
-        xhr.onload = function() {
-            if (xhr.status === 200) {
-                alert("삭제 성공");
-                getData();
-            } else {
-                alert("삭제 실패");
+
+        function showUpdateModal() {
+            const id = document.getElementById("id").value;
+            if (!id) {
+                alert("ID 입력하기");
+                return;
             }
-        };
-        xhr.send();
-    }
-</script>
+
+            const xhr = new XMLHttpRequest();
+            xhr.open("GET", `${apiUrl}/${id}`, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const person = JSON.parse(xhr.responseText);
+                    document.getElementById("modal-firstName").value = person.firstName;
+                    document.getElementById("modal-lastName").value = person.lastName;
+                    document.getElementById("modal-birthDate").value = person.birthDate;
+                    document.getElementById("modal-gender").value = person.gender;
+                    document.getElementById("modal-nationality").value = person.nationality;
+                    document.getElementById("dataModalLabel").innerText = "데이터 수정";
+                } else {
+                    alert("데이터 불러오기 실패");
+                }
+            };
+            xhr.send();
+        }
+
+        function saveData() {
+            const id = document.getElementById("id").value;
+            const firstName = document.getElementById("modal-firstName").value;
+            const lastName = document.getElementById("modal-lastName").value;
+            const birthDate = document.getElementById("modal-birthDate").value;
+            const gender = document.getElementById("modal-gender").value;
+            const nationality = document.getElementById("modal-nationality").value;
+
+            const data = { firstName, lastName, birthDate, gender, nationality };
+
+            if (id && document.getElementById("dataModalLabel").innerText === "데이터 수정") {
+                const xhr = new XMLHttpRequest();
+                xhr.open("PUT", `${apiUrl}/${id}`, true);
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        alert("수정 성공");
+                        getData();
+                        $("#dataModal").modal("hide");
+                    } else {
+                        alert("수정 실패");
+                    }
+                };
+                xhr.send(JSON.stringify(data));
+            } else {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", apiUrl, true);
+                xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+                xhr.onload = function () {
+                    if (xhr.status === 201) {
+                        alert("추가 성공");
+                        getData();
+                        $("#dataModal").modal("hide");
+                    } else {
+                        alert("추가 실패");
+                    }
+                };
+                xhr.send(JSON.stringify(data));
+            }
+        }
+
+        function deleteData() {
+            const id = document.getElementById("id").value;
+            if (!id) {
+                alert("ID 입력하기");
+                return;
+            }
+            const xhr = new XMLHttpRequest();
+            xhr.open("DELETE", `${apiUrl}/${id}`, true);
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    alert("삭제 성공");
+                    getData();
+                } else {
+                    alert("삭제 실패");
+                }
+            };
+            xhr.send();
+        }
+    </script>
 
 </body>
+
 </html>
