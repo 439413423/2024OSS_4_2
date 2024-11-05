@@ -30,9 +30,8 @@ ID: <input type="text" id="id" />
     <option value="외국인">외국인</option>
 </select><br>
 <br>
-<!-- Modal Trigger Buttons -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dataModal" onclick="showCreateModal()">데이터 추가</button>
-<button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#dataModal" onclick="showUpdateModal()">데이터 수정</button>
+<button onclick="showCreateModal()">데이터 추가</button>
+<button onclick="showUpdateModal()">데이터 수정</button>
 <button onclick="deleteData()">데이터 삭제</button>
 <br><br>
 
@@ -40,39 +39,39 @@ ID: <input type="text" id="id" />
     <h2>회원 목록</h2>
 </div>
 
-<!-- 데이터 추가/수정 Modal -->
+<!-- 데이터 추가/수정 Modal (Bootstrap 설정을 활용해 기본적으로 숨김) -->
 <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="dataModalLabel">데이터 추가/수정</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="dataModalLabel"></h5> <!-- 모달 제목이 동적으로 변경됨 -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                이름: <input type="text" id="modal-firstName" class="form-control" /><br>
+                성: <input type="text" id="modal-lastName" class="form-control" /><br>
+                생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
+                성별: 
+                <select id="modal-gender" class="form-control">
+                    <option value="남">남</option>
+                    <option value="여">여</option>
+                </select><br>
+                국적: 
+                <select id="modal-nationality" class="form-control">
+                    <option value="내국인">내국인</option>
+                    <option value="외국인">외국인</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
+            </div>
         </div>
-        <div class="modal-body">
-          이름: <input type="text" id="modal-firstName" class="form-control" /><br>
-          성: <input type="text" id="modal-lastName" class="form-control" /><br>
-          생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
-          성별: 
-          <select id="modal-gender" class="form-control">
-              <option value="남">남</option>
-              <option value="여">여</option>
-          </select><br>
-          국적: 
-          <select id="modal-nationality" class="form-control">
-              <option value="내국인">내국인</option>
-              <option value="외국인">외국인</option>
-          </select>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
-        </div>
-      </div>
     </div>
 </div>
 
 <script>
-    const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users";
+    const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users"; // 주어진 MockAPI 링크 사용
 
     function getData() {
         const xhr = new XMLHttpRequest();
@@ -94,12 +93,16 @@ ID: <input type="text" id="id" />
     }
 
     function showCreateModal() {
+        // 초기화
         document.getElementById("modal-firstName").value = "";
         document.getElementById("modal-lastName").value = "";
         document.getElementById("modal-birthDate").value = "";
         document.getElementById("modal-gender").value = "남";
         document.getElementById("modal-nationality").value = "내국인";
+        // 모달 제목을 "데이터 추가"로 설정
         document.getElementById("dataModalLabel").innerText = "데이터 추가";
+        // 모달 표시
+        $("#dataModal").modal("show");
     }
 
     function showUpdateModal() {
@@ -119,7 +122,10 @@ ID: <input type="text" id="id" />
                 document.getElementById("modal-birthDate").value = person.birthDate;
                 document.getElementById("modal-gender").value = person.gender;
                 document.getElementById("modal-nationality").value = person.nationality;
+                // 모달 제목을 "데이터 수정"으로 설정
                 document.getElementById("dataModalLabel").innerText = "데이터 수정";
+                // 모달 표시
+                $("#dataModal").modal("show");
             } else {
                 alert("데이터 불러오기 실패");
             }
@@ -145,6 +151,7 @@ ID: <input type="text" id="id" />
                 if (xhr.status === 200) {
                     alert("수정 성공");
                     getData();
+                    $("#dataModal").modal("hide");
                 } else {
                     alert("수정 실패");
                 }
@@ -158,6 +165,7 @@ ID: <input type="text" id="id" />
                 if (xhr.status === 201) {
                     alert("추가 성공");
                     getData();
+                    $("#dataModal").modal("hide");
                 } else {
                     alert("추가 실패");
                 }
