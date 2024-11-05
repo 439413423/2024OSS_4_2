@@ -30,9 +30,8 @@ ID: <input type="text" id="id" />
     <option value="외국인">외국인</option>
 </select><br>
 <br>
-<!-- 모달을 표시하는 버튼 -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">데이터 추가</button>
-<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#updateModal">데이터 수정</button>
+<button onclick="showCreateModal()">데이터 추가</button>
+<button onclick="showUpdateModal()">데이터 수정</button>
 <button onclick="deleteData()">데이터 삭제</button>
 <br><br>
 
@@ -49,23 +48,23 @@ ID: <input type="text" id="id" />
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                이름: <input type="text" id="modal-firstName-create" class="form-control" /><br>
-                성: <input type="text" id="modal-lastName-create" class="form-control" /><br>
-                생년월일: <input type="date" id="modal-birthDate-create" class="form-control" /><br>
+                이름: <input type="text" id="modal-firstName" class="form-control" /><br>
+                성: <input type="text" id="modal-lastName" class="form-control" /><br>
+                생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
                 성별: 
-                <select id="modal-gender-create" class="form-control">
+                <select id="modal-gender" class="form-control">
                     <option value="남">남</option>
                     <option value="여">여</option>
                 </select><br>
                 국적: 
-                <select id="modal-nationality-create" class="form-control">
+                <select id="modal-nationality" class="form-control">
                     <option value="내국인">내국인</option>
                     <option value="외국인">외국인</option>
                 </select>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
+                <button type="button" class="btn btn-primary" onclick="saveData('create')">저장하기</button>
             </div>
         </div>
     </div>
@@ -80,29 +79,33 @@ ID: <input type="text" id="id" />
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                이름: <input type="text" id="modal-firstName-update" class="form-control" /><br>
-                성: <input type="text" id="modal-lastName-update" class="form-control" /><br>
-                생년월일: <input type="date" id="modal-birthDate-update" class="form-control" /><br>
+                이름: <input type="text" id="modal-firstName" class="form-control" /><br>
+                성: <input type="text" id="modal-lastName" class="form-control" /><br>
+                생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
                 성별: 
-                <select id="modal-gender-update" class="form-control">
+                <select id="modal-gender" class="form-control">
                     <option value="남">남</option>
                     <option value="여">여</option>
                 </select><br>
                 국적: 
-                <select id="modal-nationality-update" class="form-control">
+                <select id="modal-nationality" class="form-control">
                     <option value="내국인">내국인</option>
                     <option value="외국인">외국인</option>
                 </select>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-                <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
+                <button type="button" class="btn btn-primary" onclick="saveData('update')">저장하기</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const createModal = new bootstrap.Modal(document.getElementById('createModal'));
+        const updateModal = new bootstrap.Modal(document.getElementById('updateModal'));
+    });
     const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/vi/users";
 
     function getData() {
