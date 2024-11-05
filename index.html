@@ -17,9 +17,6 @@
 <br><br>
 ID: <input type="text" id="id" /> 
 <br><br>
-<div id="data-list">
-    <h2>회원 목록</h2>
-</div>
 
 <!-- 데이터 추가/수정 Modal -->
 <div class="modal fade" id="dataModal" tabindex="-1" aria-labelledby="dataModalLabel" aria-hidden="true">
@@ -46,114 +43,150 @@ ID: <input type="text" id="id" />
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
-        <button type="button" class="btn btn-primary" onclick="saveData()">저장하기</button>
+        <button type="button" class="btn btn-primary" onclick="createData()">저장하기</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 버튼 추가: 데이터 추가 및 수정 -->
-<button class="btn btn-primary" onclick="showAddModal()">데이터 추가</button>
-<button class="btn btn-warning" onclick="showEditModal()">데이터 수정</button>
+<button class="btn btn-primary" onclick="showCreateModal()">데이터 추가</button>
+<button class="btn btn-warning" onclick="showUpdateModal()">데이터 수정</button>
+<button class="btn btn-danger" onclick="deleteData()">데이터 삭제</button>
+
+<div id="data-list">
+    <h2>회원 목록</h2>
+</div>
 
 <script>
-    const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/v1/users";
+    const apiUrl = "http://localhost:3000/users";
 
     function getData() {
-        $.ajax({
-            url: apiUrl,
-            method: "GET",
-            success: function(data) {
-                const dataList = $("#data-list");
-                dataList.html("<h2>회원 목록</h2>");
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", apiUrl, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const data = JSON.parse(xhr.responseText);
+                const dataList = document.getElementById("data-list");
+                dataList.innerHTML = "<h2>회원 목록</h2>";
                 data.forEach(person => {
-                    dataList.append(`<div>ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}</div>`);
+                    dataList.innerHTML += `<div>ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}</div>`;
                 });
-            },
-            error: function() {
+            } else {
                 alert("데이터 로드 실패");
             }
-        });
+        };
+        xhr.send();
     }
 
-    function showAddModal() {
-        $("#modal-firstName").val('');
-        $("#modal-lastName").val('');
-        $("#modal-birthDate").val('');
-        $("#modal-gender").val('남');
-        $("#modal-nationality").val('내국인');
-        $("#dataModalLabel").text("데이터 추가");
+    function showCreateModal() {
+        document.getElementById("modal-firstName").value = "";
+        document.getElementById("modal-lastName").value = "";
+        document.getElementById("modal-birthDate").value = "";
+        document.getElementById("modal-gender").value = "남";
+        document.getElementById("modal-nationality").value = "내국인";
+        document.getElementById("dataModalLabel").innerText = "데이터 추가";
         $("#dataModal").modal("show");
     }
 
-    function showEditModal() {
-        const id = $("#id").val();
+    function createData() {
+        const firstName = document.getElementById("modal-firstName").value;
+        const lastName = document.getElementById("modal-lastName").value;
+        const birthDate = document.getElementById("modal-birthDate").value;
+        const gender = document.getElementById("modal-gender").value;
+        const nationality = document.getElementById("modal-nationality").value;
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", apiUrl, true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onload = function() {
+            if (xhr.status === 201) {
+                alert("추가 성공");
+                getData();
+                $("#dataModal").modal("hide");
+            } else {
+                alert("추가 실패");
+            }
+        };
+
+        const newData = { firstName, lastName, birthDate, gender, nationality };
+        xhr.send(JSON.stringify(newData));
+    }
+
+    function showUpdateModal() {
+        const id = document.getElementById("id").value;
         if (!id) {
             alert("ID 입력하기");
             return;
         }
 
-        $.ajax({
-            url: `${apiUrl}/${id}`,
-            method: "GET",
-            success: function(person) {
-                $("#modal-firstName").val(person.firstName);
-                $("#modal-lastName").val(person.lastName);
-                $("#modal-birthDate").val(person.birthDate);
-                $("#modal-gender").val(person.gender);
-                $("#modal-nationality").val(person.nationality);
-                $("#dataModalLabel").text("데이터 수정");
+        const xhr = new XMLHttpRequest();
+        xhr.open("GET", `${apiUrl}/${id}`, true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                const person = JSON.parse(xhr.responseText);
+                document.getElementById("modal-firstName").value = person.firstName;
+                document.getElementById("modal-lastName").value = person.lastName;
+                document.getElementById("modal-birthDate").value = person.birthDate;
+                document.getElementById("modal-gender").value = person.gender;
+                document.getElementById("modal-nationality").value = person.nationality;
+                document.getElementById("dataModalLabel").innerText = "데이터 수정";
                 $("#dataModal").modal("show");
-            },
-            error: function() {
+            } else {
                 alert("데이터 불러오기 실패");
             }
-        });
+        };
+        xhr.send();
     }
 
-    function saveData() {
-        const id = $("#id").val();
-        const firstName = $("#modal-firstName").val();
-        const lastName = $("#modal-lastName").val();
-        const birthDate = $("#modal-birthDate").val();
-        const gender = $("#modal-gender").val();
-        const nationality = $("#modal-nationality").val();
+    function updateData() {
+        const id = document.getElementById("id").value;
+        const firstName = document.getElementById("modal-firstName").value;
+        const lastName = document.getElementById("modal-lastName").value;
+        const birthDate = document.getElementById("modal-birthDate").value;
+        const gender = document.getElementById("modal-gender").value;
+        const nationality = document.getElementById("modal-nationality").value;
 
-        const data = { firstName, lastName, birthDate, gender, nationality };
-
-        if (id && $("#dataModalLabel").text() === "데이터 수정") {
-            // 수정 요청
-            $.ajax({
-                url: `${apiUrl}/${id}`,
-                method: "PUT",
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function() {
-                    alert("수정 성공");
-                    getData();
-                    $("#dataModal").modal("hide");
-                },
-                error: function() {
-                    alert("수정 실패");
-                }
-            });
-        } else {
-            // 추가 요청
-            $.ajax({
-                url: apiUrl,
-                method: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function() {
-                    alert("추가 성공");
-                    getData();
-                    $("#dataModal").modal("hide");
-                },
-                error: function() {
-                    alert("추가 실패");
-                }
-            });
+        if (!id) {
+            alert("ID 입력하기");
+            return;
         }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open("PUT", `${apiUrl}/${id}`, true);
+        xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                alert("수정 성공");
+                getData();
+                $("#dataModal").modal("hide");
+            } else {
+                alert("수정 실패");
+            }
+        };
+
+        const updatedData = { firstName, lastName, birthDate, gender, nationality };
+        xhr.send(JSON.stringify(updatedData));
+    }
+
+    function deleteData() {
+        const id = document.getElementById("id").value;
+        if (!id) {
+            alert("ID 입력하기");
+            return;
+        }
+        const xhr = new XMLHttpRequest();
+        xhr.open("DELETE", `${apiUrl}/${id}`, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                alert("삭제 성공");
+                getData();
+            } else {
+                alert("삭제 실패");
+            }
+        };
+        xhr.send();
     }
 </script>
 
