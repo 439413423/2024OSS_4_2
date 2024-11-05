@@ -31,11 +31,9 @@
         <option value="외국인">외국인</option>
     </select><br>
     <br>
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dataModal"
-        onclick="showCreateModal()">데이터 추가</button>
+    <button type="button" class="btn btn-primary" onclick="showCreateModal()">데이터 추가</button>
 
-    <button type="button" class="btn btn-secondary"
-        onclick="showUpdateModal()">데이터 수정</button>
+    <button type="button" class="btn btn-secondary" onclick="showUpdateModal()">데이터 수정</button>
 
     <button onclick="deleteData()">데이터 삭제</button>
     <br><br>
@@ -48,7 +46,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="dataModalLabel"></h5> 
+                    <h5 class="modal-title" id="dataModalLabel"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -97,13 +95,15 @@
         }
 
         function showCreateModal() {
-   
             document.getElementById("modal-firstName").value = "";
             document.getElementById("modal-lastName").value = "";
             document.getElementById("modal-birthDate").value = "";
             document.getElementById("modal-gender").value = "남";
             document.getElementById("modal-nationality").value = "내국인";
             document.getElementById("dataModalLabel").innerText = "데이터 추가";
+
+            const modalElement = new bootstrap.Modal(document.getElementById('dataModal'));
+            modalElement.show();
         }
 
         function showUpdateModal() {
@@ -124,7 +124,9 @@
                     document.getElementById("modal-gender").value = person.gender;
                     document.getElementById("modal-nationality").value = person.nationality;
                     document.getElementById("dataModalLabel").innerText = "데이터 수정";
-                    $('#dataModal').modal('show');
+
+                    const modalElement = new bootstrap.Modal(document.getElementById('dataModal'));
+                    modalElement.show();
                 } else {
                     alert("데이터 불러오기 실패");
                 }
@@ -150,7 +152,8 @@
                     if (xhr.status === 200) {
                         alert("수정 성공");
                         getData();
-                        $("#dataModal").modal("hide");
+                        const modalElement = bootstrap.Modal.getInstance(document.getElementById('dataModal'));
+                        modalElement.hide();
                     } else {
                         alert("수정 실패");
                     }
@@ -164,7 +167,8 @@
                     if (xhr.status === 201) {
                         alert("추가 성공");
                         getData();
-                        $("#dataModal").modal("hide");
+                        const modalElement = bootstrap.Modal.getInstance(document.getElementById('dataModal'));
+                        modalElement.hide();
                     } else {
                         alert("추가 실패");
                     }
