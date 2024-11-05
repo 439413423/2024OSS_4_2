@@ -19,14 +19,16 @@ ID: <input type="text" id="id" />
 이름: <input type="text" id="firstName" /><br>
 성: <input type="text" id="lastName" /><br>
 생년월일: <input type="date" id="birthDate" /><br>
-성별: <select id="gender">
-        <option value="남">남</option>
-        <option value="여">여</option>
-      </select><br>
-국적: <select id="nationality">
-        <option value="내국인">내국인</option>
-        <option value="외국인">외국인</option>
-      </select><br>
+성별: 
+<select id="gender">
+    <option value="남">남</option>
+    <option value="여">여</option>
+</select><br>
+국적: 
+<select id="nationality">
+    <option value="내국인">내국인</option>
+    <option value="외국인">외국인</option>
+</select><br>
 <br>
 <button onclick="showCreateModal()">데이터 추가</button>
 <button onclick="showUpdateModal()">데이터 수정</button>
@@ -69,7 +71,7 @@ ID: <input type="text" id="id" />
 </div>
 
 <script>
-    const apiUrl = "https://mockapi.io/api/v1/users"; // MockAPI URL로 수정
+    const apiUrl = "https://mockapi.io/api/v1/users"; // 배포 가능한 MockAPI URL 사용
 
     function getData() {
         const xhr = new XMLHttpRequest();
@@ -91,7 +93,6 @@ ID: <input type="text" id="id" />
     }
 
     function showCreateModal() {
-        // Modal을 데이터 추가에 사용
         document.getElementById("modal-firstName").value = "";
         document.getElementById("modal-lastName").value = "";
         document.getElementById("modal-birthDate").value = "";
@@ -102,7 +103,6 @@ ID: <input type="text" id="id" />
     }
 
     function showUpdateModal() {
-        // Modal을 데이터 수정에 사용
         const id = document.getElementById("id").value;
         if (!id) {
             alert("ID 입력하기");
@@ -139,7 +139,6 @@ ID: <input type="text" id="id" />
         const data = { firstName, lastName, birthDate, gender, nationality };
 
         if (id && document.getElementById("dataModalLabel").innerText === "데이터 수정") {
-            // 수정 요청
             const xhr = new XMLHttpRequest();
             xhr.open("PUT", `${apiUrl}/${id}`, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
@@ -154,7 +153,6 @@ ID: <input type="text" id="id" />
             };
             xhr.send(JSON.stringify(data));
         } else {
-            // 추가 요청
             const xhr = new XMLHttpRequest();
             xhr.open("POST", apiUrl, true);
             xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
