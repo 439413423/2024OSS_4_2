@@ -13,7 +13,7 @@
 
 <div class="container mt-4">
     <h1>회원 관리</h1>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#dataModal">데이터 추가/수정</button>
+    <button class="btn btn-primary" onclick="showAddModal()">데이터 추가</button>
     <button class="btn btn-secondary" onclick="getData()">회원 목록 로드</button>
     <br><br>
 
@@ -31,7 +31,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        ID: <input type="text" id="modal-id" class="form-control" />
+        ID: <input type="text" id="modal-id" class="form-control" readonly />
         이름: <input type="text" id="modal-firstName" class="form-control" /><br>
         성: <input type="text" id="modal-lastName" class="form-control" /><br>
         생년월일: <input type="date" id="modal-birthDate" class="form-control" /><br>
@@ -57,6 +57,7 @@
 <script>
     const apiUrl = "https://672819d3270bd0b975545f98.mockapi.io/api/v1/users";
 
+    // 데이터 목록 가져오기
     function getData() {
         $.ajax({
             url: apiUrl,
@@ -65,7 +66,13 @@
                 const dataList = $("#data-list");
                 dataList.html("<h2>회원 목록</h2>");
                 data.forEach(person => {
-                    dataList.append(`<div>ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}</div>`);
+                    dataList.append(`
+                        <div>
+                            ID: ${person.id}, 이름: ${person.firstName}, 성: ${person.lastName}, 생년월일: ${person.birthDate}, 성별: ${person.gender}, 국적: ${person.nationality}
+                            <button onclick="editData(${person.id})">수정</button>
+                            <button onclick="deleteData(${person.id})">삭제</button>
+                        </div>
+                    `);
                 });
             },
             error: function() {
@@ -74,6 +81,18 @@
         });
     }
 
+    // 데이터 추가/수정 Modal 열기
+    function showAddModal() {
+        $("#modal-id").val('');
+        $("#modal-firstName").val('');
+        $("#modal-lastName").val('');
+        $("#modal-birthDate").val('');
+        $("#modal-gender").val('남');
+        $("#modal-nationality").val('내국인');
+        $("#dataModal").modal("show");
+    }
+
+    // 데이터 저장
     function saveData() {
         const id = $("#modal-id").val();
         const firstName = $("#modal-firstName").val();
@@ -82,23 +101,74 @@
         const gender = $("#modal-gender").val();
         const nationality = $("#modal-nationality").val();
 
-        if (!id) {
-            alert("ID 입력하기");
-            return;
-        }
+        const data = { firstName, lastName, birthDate, gender, nationality };
 
+        if (id) {
+            // 수정 요청
+            $.ajax({
+                url: `${apiUrl}/${id}`,
+                method: "PUT",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function() {
+                    alert("수정 성공");
+                    getData();
+                    $("#dataModal").modal("hide");
+                },
+                error: function() {
+                    alert("수정 실패");
+                }
+            });
+        } else {
+            // 추가 요청
+            $.ajax({
+                url: apiUrl,
+                method: "POST",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function() {
+                    alert("추가 성공");
+                    getData();
+                    $("#dataModal").modal("hide");
+                },
+                error: function() {
+                    alert("추가 실패");
+                }
+            });
+        }
+    }
+
+    // 데이터 삭제
+    function deleteData(id) {
         $.ajax({
-            url: apiUrl,
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ id, firstName, lastName, birthDate, gender, nationality }),
+            url: `${apiUrl}/${id}`,
+            method: "DELETE",
             success: function() {
-                alert("추가 성공");
+                alert("삭제 성공");
                 getData();
-                $("#dataModal").modal("hide");
             },
             error: function() {
-                alert("추가 실패");
+                alert("삭제 실패");
+            }
+        });
+    }
+
+    // 데이터 수정 Modal 열기
+    function editData(id) {
+        $.ajax({
+            url: `${apiUrl}/${id}`,
+            method: "GET",
+            success: function(person) {
+                $("#modal-id").val(person.id);
+                $("#modal-firstName").val(person.firstName);
+                $("#modal-lastName").val(person.lastName);
+                $("#modal-birthDate").val(person.birthDate);
+                $("#modal-gender").val(person.gender);
+                $("#modal-nationality").val(person.nationality);
+                $("#dataModal").modal("show");
+            },
+            error: function() {
+                alert("데이터 불러오기 실패");
             }
         });
     }
